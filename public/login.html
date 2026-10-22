@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Geopolitics Game - Login</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="box">
+    <h1>Geopolitics Game</h1>
+    <p id="status">Please sign up or log in to play.</p>
+
+    <div id="forms">
+      <input id="username" placeholder="Username">
+      <input id="password" type="password" placeholder="Password">
+      <button onclick="signup()">Sign Up</button>
+      <button onclick="login()">Log In</button>
+    </div>
+
+    <button id="logoutBtn" onclick="logout()" style="display:none">Log Out</button>
+    <p id="message"></p>
+  </div>
+
+  <script src="js/login.js"></script>
+</body>
+</html>

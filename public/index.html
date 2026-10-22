@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Geopolitics Game</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="box">
+    <h1>Geopolitics Game</h1>
+    <p id="status">Checking...</p>
+
+    <div id="newGame" style="display:none">
+      <p>Pick your country:</p>
+      <select id="countrySelect"></select>
+      <button onclick="startGame()">Start New Game</button>
+
+      <h3>My Games</h3>
+      <div id="myGames"></div>
+    </div>
+
+    <a href="login.html">Log in / Sign up</a>
+    <p id="message"></p>
+  </div>
+
+  <script src="/js/home.js"></script>
+</body>
+</html>

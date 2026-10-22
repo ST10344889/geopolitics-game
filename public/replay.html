@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Game Replay</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="wide">
+    <h1>Game Replay</h1>
+    <a href="/index.html">Back to home</a> |
+    <a id="backToGame" href="#">Back to game</a>
+
+    <p id="replayInfo">Loading...</p>
+
+    <div id="board"></div>
+
+    <div id="replayText"></div>
+    <p id="replayDice"></p>
+
+    <div class="controls">
+      <button onclick="previousStep()">&lt; Previous</button>
+      <button id="playBtn" onclick="togglePlay()">Play</button>
+      <button onclick="nextStep()">Next &gt;</button>
+      <br>
+      <input id="slider" type="range" min="0" max="0" value="0" oninput="goTo(this.value)">
+      <p id="stepCount"></p>
+    </div>
+  </div>
+
+  <script src="/js/replay.js"></script>
+</body>
+</html>

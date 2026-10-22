@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Game Board</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="wide">
+    <h1>Game Board</h1>
+    <a href="/index.html">Back to home</a> |
+    <a id="replayLink" href="#">Watch replay</a>
+
+    <p id="turnInfo"></p>
+    <div id="scoreboard" aria-label="Player country counts"></div>
+    <div id="gameResult" style="display:none"></div>
+
+    <div id="npcBox" style="display:none">
+      <p id="npcDice"></p>
+      <button id="ffBtn" onclick="fastForwardNow()">Fast-forward &gt;&gt;</button>
+    </div>
+
+    <div id="board"></div>
+
+        <div id="actions" style="display:none">
+      <h2>Your Turn!</h2>
+      <p id="pendingInfo"></p>
+
+      <div class="panel">
+        <h3>1. Place new soldiers</h3>
+        <select id="placeCountry"></select>
+        <input id="placeAmount" type="number" min="1" value="1">
+        <button onclick="placeSoldiers()">Place</button>
+      </div>
+
+      <div class="panel">
+        <h3>2. Move soldiers</h3>
+        From <select id="transferFrom"></select>
+        To <select id="transferTo"></select>
+        <input id="transferAmount" type="number" min="1" value="1">
+        <button onclick="transferSoldiers()">Move</button>
+      </div>
+
+      <div class="panel">
+        <h3>3. Attack</h3>
+        From <select id="attackFrom"></select>
+        Target <select id="attackTarget"></select>
+        <button onclick="attack()">Attack / Roll Dice</button>
+        <div id="battleBox"></div>
+      </div>
+
+      <button onclick="endTurn()">End Turn / Stop Attack</button>
+      <p id="actionMessage"></p>
+    </div>
+
+    <h3>Game Story</h3>
+    <div id="log"></div>
+  </div>
+
+  <script src="js/Game.js"></script>
+</body>
+</html>

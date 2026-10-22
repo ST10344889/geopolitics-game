@@ -1,0 +1,324 @@
+body {
+  background: #1b2430;
+  color: white;
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 20px;
+}
+
+.wide,
+.box {
+  animation: pageEnter 0.4s ease-out both;
+}
+
+.box {
+  background: #2c3a4d;
+  max-width: 350px;
+  margin: 60px auto;
+  padding: 25px;
+  border-radius: 10px;
+  text-align: center;
+}
+
+input {
+  display: block;
+  width: 90%;
+  margin: 10px auto;
+  padding: 10px;
+  border-radius: 5px;
+  border: none;
+}
+
+button {
+  background: #e8a33d;
+  border: none;
+  padding: 10px 18px;
+  margin: 5px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+button:hover {
+  background: #f0b85c;
+  transform: translateY(-2px);
+}
+
+button:active {
+  transform: translateY(0) scale(0.98);
+}
+.wide {
+  max-width: 900px;
+  margin: 30px auto;
+}
+
+a {
+  color: #e8a33d;
+}
+
+select {
+  padding: 10px;
+  border-radius: 5px;
+  margin: 10px;
+}
+
+.gameLink {
+  display: block;
+  margin: 8px;
+  animation: logEnter 0.3s ease both;
+}
+
+#board {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 12px;
+  margin: 20px 0;
+}
+
+.card {
+  background: #2c3a4d;
+  padding: 12px;
+  border-radius: 8px;
+  text-align: center;
+  border: 2px solid transparent;
+  animation: cardEnter 0.35s ease both;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.card.owner-0, .score-entry.owner-0 { --owner-color: #e8a33d; }
+.card.owner-1, .score-entry.owner-1 { --owner-color: #4ea5d9; }
+.card.owner-2, .score-entry.owner-2 { --owner-color: #e05a47; }
+.card.owner-3, .score-entry.owner-3 { --owner-color: #7bc47f; }
+.card.owner-4, .score-entry.owner-4 { --owner-color: #b889e8; }
+.card.owner-5, .score-entry.owner-5 { --owner-color: #56c7b2; }
+.card.owner-6, .score-entry.owner-6 { --owner-color: #f17ca8; }
+.card.owner-7, .score-entry.owner-7 { --owner-color: #c5c85a; }
+.card.owner-8, .score-entry.owner-8 { --owner-color: #e78b4e; }
+.card.owner-9, .score-entry.owner-9 { --owner-color: #aab4c0; }
+
+.card[class*="owner-"] {
+  border-color: var(--owner-color);
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  background-color: #34465c;
+}
+
+.card:nth-child(2) { animation-delay: 0.03s; }
+.card:nth-child(3) { animation-delay: 0.06s; }
+.card:nth-child(4) { animation-delay: 0.09s; }
+.card:nth-child(5) { animation-delay: 0.12s; }
+.card:nth-child(6) { animation-delay: 0.15s; }
+.card:nth-child(7) { animation-delay: 0.18s; }
+.card:nth-child(8) { animation-delay: 0.21s; }
+.card:nth-child(9) { animation-delay: 0.24s; }
+.card:nth-child(10) { animation-delay: 0.27s; }
+
+.card.mine {
+  box-shadow: inset 0 0 0 1px #fff;
+}
+
+.soldiers {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.owner {
+  font-size: 12px;
+  color: var(--owner-color, #aab4c0);
+  font-weight: bold;
+}
+
+#scoreboard {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 12px 0;
+}
+
+.score-entry {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  background: #2c3a4d;
+  border-left: 4px solid var(--owner-color, #aab4c0);
+  border-radius: 5px;
+  padding: 8px 10px;
+  font-size: 14px;
+}
+
+.score-entry strong {
+  color: var(--owner-color, white);
+}
+
+.score-entry.current-player {
+  outline: 2px solid #fff;
+}
+
+.game-result,
+.battle-result {
+  padding: 12px 15px;
+  margin: 12px 0;
+  border-radius: 8px;
+  font-weight: bold;
+  animation: pageEnter 0.3s ease-out both;
+}
+
+.game-result.victory,
+.battle-result.conquered {
+  background: #24543a;
+  border: 1px solid #7bc47f;
+}
+
+.game-result.defeat,
+.battle-result.failed {
+  background: #542d2b;
+  border: 1px solid #e05a47;
+}
+
+.battle-result.continue {
+  background: #223044;
+  border: 1px solid #4ea5d9;
+}
+
+.battle-heading {
+  margin: 0 0 8px;
+  text-transform: uppercase;
+}
+
+.battle-commentary {
+  background: #3d2b59;
+  border-left: 4px solid #b889e8;
+  border-radius: 5px;
+  margin: 10px 0 0;
+  padding: 10px 12px;
+  line-height: 1.5;
+}
+
+#log {
+  max-height: 280px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-right: 8px;
+}
+
+#log p {
+  background: #2c3a4d;
+  padding: 8px;
+  border-radius: 5px;
+  margin: 5px 0;
+  animation: logEnter 0.3s ease both;
+}
+
+#actions {
+  background: #223044;
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+
+.panel {
+  background: #2c3a4d;
+  padding: 10px 15px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+input[type=number] {
+  display: inline-block;
+  width: 60px;
+  margin: 5px;
+}
+
+.die {
+  display: inline-block;
+  width: 36px;
+  height: 36px;
+  line-height: 36px;
+  margin: 3px;
+  background: white;
+  color: #1b2430;
+  font-weight: bold;
+  font-size: 20px;
+  border-radius: 6px;
+  text-align: center;
+  animation: diceRoll 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.die:nth-of-type(2) { animation-delay: 0.06s; }
+.die:nth-of-type(3) { animation-delay: 0.12s; }
+
+@keyframes pageEnter {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes cardEnter {
+  from { opacity: 0; transform: translateY(10px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes logEnter {
+  from { opacity: 0; transform: translateX(-8px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes diceRoll {
+  from { opacity: 0; transform: rotate(-25deg) scale(0.65); }
+  to { opacity: 1; transform: rotate(0) scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+.die.defend {
+  background: #e05a47;
+  color: white;
+}
+
+#npcBox {
+  background: #223044;
+  padding: 12px 15px;
+  border-radius: 10px;
+  margin: 10px 0;
+}
+
+#npcDice {
+  min-height: 40px;
+}
+
+#turnInfo {
+  font-weight: bold;
+  color: #e8a33d;
+}
+
+.controls {
+  background: #223044;
+  padding: 12px;
+  border-radius: 10px;
+  text-align: center;
+}
+
+input[type=range] {
+  display: inline-block;
+  width: 70%;
+}
+
+#replayText {
+  background: #2c3a4d;
+  border-left: 5px solid #e8a33d;
+  padding: 12px 15px;
+  border-radius: 8px;
+  margin: 10px 0;
+  min-height: 24px;
+}
