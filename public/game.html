@@ -6,62 +6,83 @@
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <div class="wide">
+  
+  <div class="wide game-page">
     <h1>Game Board</h1>
     <a href="/index.html">Back to home</a> |
     <a id="replayLink" href="#">Watch replay</a>
 
-    <p id="turnInfo"></p>
-    <div class="map-header">
-      <div>
-        <strong>Map view</strong>
-        <span>Country cards show army size and population.</span>
-      </div>
-    </div>
-    <div id="scoreboard" aria-label="Player country counts"></div>
-    <div id="gameResult" style="display:none"></div>
+    <!-- NEW GAME LAYOUT START -->
+    <div class="game-layout">
+      <aside class="player-dashboard" aria-label="Player dashboard">
+        <section class="dashboard-section">
+          <h2>Your dashboard</h2>
+          <p id="turnInfo"></p>
+          <p class="dashboard-key">
+            <span title="Countries are the territories you control.">Countries = territories</span>
+            <span title="Army is the total number of soldiers you control.">Army = soldiers</span>
+          </p>
+        </section>
 
-    <div id="npcBox" style="display:none">
-      <p id="npcDice"></p>
-      <button id="ffBtn" onclick="fastForwardNow()">Fast-forward &gt;&gt;</button>
-    </div>
-
-    <div id="board"></div>
+        <div id="gameResult" style="display:none"></div>
+        <div id="scoreboard" aria-label="Players: countries controlled and total army"></div>
 
         <div id="actions" style="display:none">
-      <h2>Your Turn!</h2>
-      <p id="pendingInfo"></p>
+          <h2>Your turn</h2>
+          <p id="pendingInfo"></p>
 
-      <div class="panel">
-        <h3>1. Place new soldiers</h3>
-        <select id="placeCountry"></select>
-        <input id="placeAmount" type="number" min="1" value="1">
-        <button onclick="placeSoldiers()">Place</button>
-      </div>
+          <div class="panel">
+            <h3>1. Place new soldiers</h3>
+            <select id="placeCountry"></select>
+            <input id="placeAmount" type="number" min="1" value="1">
+            <button onclick="placeSoldiers()">Place</button>
+          </div>
 
-      <div class="panel">
-        <h3>2. Move soldiers</h3>
-        From <select id="transferFrom"></select>
-        To <select id="transferTo"></select>
-        <input id="transferAmount" type="number" min="1" value="1">
-        <button onclick="transferSoldiers()">Move</button>
-      </div>
+          <div class="panel">
+            <h3>2. Move soldiers</h3>
+            From <select id="transferFrom"></select>
+            To <select id="transferTo"></select>
+            <input id="transferAmount" type="number" min="1" value="1">
+            <button onclick="transferSoldiers()">Move</button>
+          </div>
 
-      <div class="panel">
-        <h3>3. Attack</h3>
-        From <select id="attackFrom"></select>
-        Target <select id="attackTarget"></select>
-        <button onclick="attack()">Attack / Roll Dice</button>
-        <div id="battleBox"></div>
-      </div>
+          <div class="panel">
+            <h3>3. Attack</h3>
+            From <select id="attackFrom"></select>
+            Target <select id="attackTarget"></select>
+            <button onclick="attack()">Attack / Roll Dice</button>
+            <div id="battleBox"></div>
+          </div>
 
-      <button onclick="endTurn()">End Turn / Stop Attack</button>
-      <p id="actionMessage"></p>
+          <button onclick="endTurn()">End Turn / Stop Attack</button>
+          <p id="actionMessage"></p>
+        </div>
+
+        <section id="npcBox" class="dashboard-section" style="display:none">
+          <h3>Computer players</h3>
+          <p id="npcDice"></p>
+          <button id="ffBtn" onclick="fastForwardNow()">Fast-forward &gt;&gt;</button>
+        </section>
+      </aside>
+
+      <main class="map-panel">
+        <div class="map-header">
+          <div>
+            <strong>World map</strong>
+            <span>Countries are grouped by region. Hover over army stats for help.</span>
+          </div>
+        </div>
+        <div id="board" class="region-board" aria-label="Countries grouped by region"></div>
+
+        <section class="game-story">
+          <h2>Game story</h2>
+          <div id="log"></div>
+        </section>
+      </main>
     </div>
-
-    <h3>Game Story</h3>
-    <div id="log"></div>
+    
   </div>
+  
 
   <script src="js/Game.js"></script>
 </body>
