@@ -420,3 +420,173 @@ input[type=range] {
     line-height: 1.5;
   }
 }
+
+
+.wide.game-page {
+  max-width: 1400px;
+}
+
+.game-layout {
+  display: grid;
+  grid-template-columns: minmax(250px, 310px) minmax(0, 1fr);
+  gap: 20px;
+  align-items: start;
+  margin-top: 18px;
+}
+
+.player-dashboard {
+  display: grid;
+  gap: 14px;
+  min-width: 0;
+  padding: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  background: #223044;
+}
+
+.dashboard-section {
+  padding: 12px;
+  border-radius: 10px;
+  background: #2c3a4d;
+}
+
+.dashboard-section h2,
+.dashboard-section h3 {
+  margin-top: 0;
+}
+
+.dashboard-key {
+  display: grid;
+  gap: 6px;
+  margin-bottom: 0;
+  color: #dfe7f3;
+  font-size: 0.82rem;
+}
+
+.dashboard-key span,
+.score-entry span {
+  cursor: help;
+}
+
+.player-dashboard #scoreboard {
+  display: grid;
+  grid-template-columns: 1fr;
+  margin: 0;
+}
+
+.player-dashboard .score-entry {
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.score-army {
+  color: #ffd98d;
+  font-size: 0.82rem;
+}
+
+.map-panel {
+  min-width: 0;
+  padding: 16px;
+  border: 1px solid rgba(78, 165, 217, 0.28);
+  border-radius: 14px;
+  background-color: #203349;
+  background-image: url("/world-map.svg"), linear-gradient(145deg, #203349, #172431);
+  background-position: center 120px, center;
+  background-repeat: no-repeat;
+  background-size: min(100%, 1000px) auto, cover;
+}
+
+.map-header {
+  background: rgba(27, 36, 48, 0.9);
+}
+
+#board.region-board {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+  margin-top: 18px;
+}
+
+.region-group {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(125px, 1fr));
+  gap: 9px;
+  padding: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  background: rgba(19, 30, 42, 0.82);
+  backdrop-filter: blur(2px);
+}
+
+.region-title {
+  grid-column: 1 / -1;
+  margin: 0;
+  padding-bottom: 7px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.16);
+  color: #f7c96d;
+  font-size: 0.95rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.card.country-tile {
+  min-width: 0;
+  padding: 10px;
+  border-width: 2px;
+  border-radius: 9px;
+  background: rgba(44, 58, 77, 0.95);
+}
+
+.country-tile h4 {
+  margin: 0 0 8px;
+  font-size: 0.9rem;
+  overflow-wrap: anywhere;
+}
+
+.country-tile .stat-pill {
+  cursor: help;
+}
+
+.country-tile .owner {
+  margin-bottom: 0;
+  overflow-wrap: anywhere;
+}
+
+.game-story {
+  margin-top: 22px;
+}
+
+.game-story h2 {
+  font-size: 1.2rem;
+}
+
+@media (max-width: 800px) {
+  .wide.game-page {
+    margin: 18px auto;
+  }
+
+  .game-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .player-dashboard {
+    order: 1;
+  }
+
+  .map-panel {
+    order: 2;
+    background-position: center 160px, center;
+  }
+}
+
+@media (max-width: 600px) {
+  .map-panel {
+    padding: 12px;
+  }
+
+  .region-group {
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    padding: 9px;
+  }
+}
+
