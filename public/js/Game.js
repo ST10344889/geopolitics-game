@@ -39,15 +39,27 @@ function drawBoard(countries) {
 
     const name = document.createElement("h3");
     name.textContent = country.name;
-    const soldiers = document.createElement("p");
-    soldiers.className = "soldiers";
-    soldiers.textContent = country.soldiers + " soldiers";
+
+    const stats = document.createElement("div");
+    stats.className = "country-stats";
+
+    const soldiers = document.createElement("span");
+    soldiers.className = "stat-pill army";
+    soldiers.textContent = "Army: " + country.soldiers;
+
+    const population = document.createElement("span");
+    population.className = "stat-pill population";
+    population.textContent = country.population ? "Pop: " + country.population + "M" : "Pop: n/a";
+
+    stats.appendChild(soldiers);
+    stats.appendChild(population);
+
     const owner = document.createElement("p");
     owner.className = "owner";
     owner.textContent = "Owner: " + country.owner;
 
     card.appendChild(name);
-    card.appendChild(soldiers);
+    card.appendChild(stats);
     card.appendChild(owner);
     board.appendChild(card);
   });
@@ -58,18 +70,26 @@ function showScoreboard(game) {
   scoreboard.innerHTML = "";
 
   game.players.forEach(function (player, index) {
-    const count = game.countries.filter(function (country) {
+    const owned = game.countries.filter(function (country) {
       return country.owner === player;
-    }).length;
+    });
+    const count = owned.length;
+    const armyTotal = owned.reduce(function (sum, country) {
+      return sum + Number(country.soldiers || 0);
+    }, 0);
+
     const entry = document.createElement("div");
     entry.className = "score-entry owner-" + index;
     if (player === game.players[game.turnIndex] && game.status === "playing") {
       entry.classList.add("current-player");
     }
+
     const name = document.createElement("strong");
     name.textContent = player;
+
     const total = document.createElement("span");
-    total.textContent = count + (count === 1 ? " country" : " countries");
+    total.textContent = count + (count === 1 ? " country" : " countries") + " • " + armyTotal + " army";
+
     entry.appendChild(name);
     entry.appendChild(total);
     scoreboard.appendChild(entry);
