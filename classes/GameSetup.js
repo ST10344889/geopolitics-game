@@ -37,6 +37,7 @@ class GameSetup {
       });
       return {
         name: name,
+        population: info.population,
         soldiers: GameSetup.soldiersFor(info.population),
         owner: name
       };
