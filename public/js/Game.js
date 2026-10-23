@@ -6,6 +6,23 @@ let playerNames = [];
 let npcRunning = false;
 let fastForward = false;
 
+// NEW REGION GROUPING START
+const countryRegions = {
+  Africa: ["Egypt", "Ethiopia", "Kenya", "Nigeria", "South Africa"],
+  Asia: ["Bangladesh", "China", "India", "Indonesia", "Iran", "Japan", "Pakistan", "Philippines", "Singapore", "South Korea", "Thailand", "Vietnam"],
+  Europe: ["France", "Germany", "Ireland", "Italy", "Luxembourg", "Netherlands", "Norway", "Poland", "Portugal", "Russia", "Spain", "Sweden", "Turkey", "Ukraine", "United Kingdom", "Vatican City"],
+  "North America": ["Canada", "Mexico", "United States"],
+  Oceania: ["Australia", "New Zealand"],
+  "South America": ["Argentina", "Brazil", "Chile", "Colombia"]
+};
+
+function getCountryRegion(countryName) {
+  return Object.keys(countryRegions).find(function (region) {
+    return countryRegions[region].includes(countryName);
+  }) || "Other";
+}
+// NEW REGION GROUPING END
+
 async function loadGame() {
   const response = await fetch("/api/games/" + gameId);
   const game = await response.json();
@@ -23,45 +40,62 @@ function fillSelect(id, items) {
   });
 }
 
+// NEW REGIONAL MAP BOARD START
 function drawBoard(countries) {
   const board = document.getElementById("board");
   board.innerHTML = "";
+
+  const countriesByRegion = {};
   countries.forEach(function (country) {
-    const card = document.createElement("div");
-    card.className = "card";
-    if (country.owner === humanName) {
-      card.classList.add("mine");
+    const region = getCountryRegion(country.name);
+    if (!countriesByRegion[region]) {
+      countriesByRegion[region] = [];
     }
-    const ownerIndex = playerNames.indexOf(country.owner);
-    if (ownerIndex >= 0) {
-      card.classList.add("owner-" + ownerIndex);
-    }
+    countriesByRegion[region].push(country);
+  });
 
-    const name = document.createElement("h3");
-    name.textContent = country.name;
+  Object.keys(countriesByRegion).sort().forEach(function (region) {
+    const group = document.createElement("section");
+    group.className = "region-group";
 
-    const stats = document.createElement("div");
-    stats.className = "country-stats";
+    const heading = document.createElement("h3");
+    heading.className = "region-title";
+    heading.textContent = region;
+    group.appendChild(heading);
 
-    const soldiers = document.createElement("span");
-    soldiers.className = "stat-pill army";
-    soldiers.textContent = "Army: " + country.soldiers;
+    countriesByRegion[region].forEach(function (country) {
+      const card = document.createElement("article");
+      card.className = "card country-tile";
 
-    const population = document.createElement("span");
-    population.className = "stat-pill population";
-    population.textContent = country.population ? "Pop: " + country.population + "M" : "Pop: n/a";
+      if (country.owner === humanName) {
+        card.classList.add("mine");
+      }
 
-    stats.appendChild(soldiers);
-    stats.appendChild(population);
+      const ownerIndex = playerNames.indexOf(country.owner);
+      if (ownerIndex >= 0) {
+        card.classList.add("owner-" + ownerIndex);
+      }
 
-    const owner = document.createElement("p");
-    owner.className = "owner";
-    owner.textContent = "Owner: " + country.owner;
+      const name = document.createElement("h4");
+      name.textContent = country.name;
 
-    card.appendChild(name);
-    card.appendChild(stats);
-    card.appendChild(owner);
-    board.appendChild(card);
+      const soldiers = document.createElement("span");
+      soldiers.className = "stat-pill army";
+      soldiers.textContent = "Army: " + country.soldiers;
+      soldiers.title = "Army: the number of soldiers currently stationed in this country.";
+      soldiers.setAttribute("aria-label", soldiers.title);
+
+      const owner = document.createElement("p");
+      owner.className = "owner";
+      owner.textContent = "Owner: " + country.owner;
+
+      card.appendChild(name);
+      card.appendChild(soldiers);
+      card.appendChild(owner);
+      group.appendChild(card);
+    });
+
+    board.appendChild(group);
   });
 }
 
@@ -88,13 +122,21 @@ function showScoreboard(game) {
     name.textContent = player;
 
     const total = document.createElement("span");
-    total.textContent = count + (count === 1 ? " country" : " countries") + " • " + armyTotal + " army";
+    total.textContent = count + (count === 1 ? " country" : " countries");
+    total.title = "Number of territories controlled by " + player + ".";
+
+    const army = document.createElement("span");
+    army.className = "score-army";
+    army.textContent = armyTotal + " soldiers";
+    army.title = "Total soldiers across " + player + "'s countries.";
 
     entry.appendChild(name);
     entry.appendChild(total);
+    entry.appendChild(army);
     scoreboard.appendChild(entry);
   });
 }
+// NEW REGIONAL MAP BOARD END
 
 function showGameResult(game) {
   const result = document.getElementById("gameResult");
