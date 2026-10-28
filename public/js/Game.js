@@ -6,81 +6,64 @@ let playerNames = [];
 let npcRunning = false;
 let fastForward = false;
 let audioContext = null;
-let musicVolume = null;
-let musicTimer = null;
-let musicNoteIndex = 0;
-const marchMelody = [
-  392, 392, 523.25, 392, 440, 392, 329.63, 0,
-  392, 392, 587.33, 523.25, 440, 392, 329.63, 0
-];
 
-function startBackgroundMusic() {
-  if (!audioContext || musicTimer) return;
-
-  musicVolume.gain.cancelScheduledValues(audioContext.currentTime);
-  musicVolume.gain.setTargetAtTime(0.025, audioContext.currentTime, 0.8);
-  musicTimer = window.setInterval(function () {
-    const frequency = marchMelody[musicNoteIndex % marchMelody.length];
-    const startAt = audioContext.currentTime + 0.02;
-
-    if (frequency) {
-      const oscillator = audioContext.createOscillator();
-      const filter = audioContext.createBiquadFilter();
-      const noteVolume = audioContext.createGain();
-      oscillator.type = "sawtooth";
-      oscillator.frequency.setValueAtTime(frequency, startAt);
-      filter.type = "lowpass";
-      filter.frequency.setValueAtTime(1400, startAt);
-      noteVolume.gain.setValueAtTime(0.001, startAt);
-      noteVolume.gain.exponentialRampToValueAtTime(0.22, startAt + 0.04);
-      noteVolume.gain.exponentialRampToValueAtTime(0.001, startAt + 0.38);
-      oscillator.connect(filter);
-      filter.connect(noteVolume);
-      noteVolume.connect(musicVolume);
-      oscillator.start(startAt);
-      oscillator.stop(startAt + 0.4);
-    }
-
-    if (musicNoteIndex % 2 === 0) {
-      const drum = audioContext.createOscillator();
-      const drumVolume = audioContext.createGain();
-      drum.type = "triangle";
-      drum.frequency.setValueAtTime(95, startAt);
-      drum.frequency.exponentialRampToValueAtTime(45, startAt + 0.13);
-      drumVolume.gain.setValueAtTime(0.3, startAt);
-      drumVolume.gain.exponentialRampToValueAtTime(0.001, startAt + 0.15);
-      drum.connect(drumVolume);
-      drumVolume.connect(musicVolume);
-      drum.start(startAt);
-      drum.stop(startAt + 0.16);
-    }
-
-    musicNoteIndex = (musicNoteIndex + 1) % marchMelody.length;
-  }, 500);
-}
-
-function prepareBackgroundMusic() {
-  if (!audioContext && window.AudioContext) {
-    audioContext = new window.AudioContext();
-    musicVolume = audioContext.createGain();
-    musicVolume.gain.value = 0.001;
-    musicVolume.connect(audioContext.destination);
+function prepareSoundEffects() {
+  const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+  if (!audioContext && AudioContextClass) {
+    audioContext = new AudioContextClass();
   }
 
   if (audioContext && audioContext.state === "suspended") {
-    audioContext.resume().then(function () {
-      startBackgroundMusic();
-    }).catch(function (error) {
-      console.info("Background music will start after a page interaction.", error);
+    audioContext.resume().catch(function (error) {
+      console.info("Sound effects could not start until browser audio is available.", error);
     });
-  } else {
-    startBackgroundMusic();
   }
 }
 
-prepareBackgroundMusic();
-document.addEventListener("pointerdown", prepareBackgroundMusic, { once: true });
-document.addEventListener("keydown", prepareBackgroundMusic, { once: true });
+document.addEventListener("pointerdown", prepareSoundEffects);
+document.addEventListener("keydown", prepareSoundEffects);
+
+function playTone(frequency, duration, waveform, delay, volume) {
+  if (!audioContext || audioContext.state !== "running") return;
+
+  const startAt = audioContext.currentTime + delay;
+  const oscillator = audioContext.createOscillator();
+  const gain = audioContext.createGain();
+  oscillator.type = waveform;
+  oscillator.frequency.setValueAtTime(frequency, startAt);
+  gain.gain.setValueAtTime(0.001, startAt);
+  gain.gain.exponentialRampToValueAtTime(volume, startAt + 0.015);
+  gain.gain.exponentialRampToValueAtTime(0.001, startAt + duration);
+  oscillator.connect(gain);
+  gain.connect(audioContext.destination);
+  oscillator.start(startAt);
+  oscillator.stop(startAt + duration);
+}
+
+function playSoundEffect(effect) {
+  if (!audioContext) prepareSoundEffects();
+
+  if (effect === "dice") {
+    [520, 760, 610].forEach(function (frequency, index) {
+      playTone(frequency, 0.12, "square", index * 0.09, 0.42);
+    });
+  } else if (effect === "place") {
+    playTone(680, 0.18, "triangle", 0, 0.42);
+  } else if (effect === "move") {
+    playTone(440, 0.15, "triangle", 0, 0.38);
+    playTone(590, 0.18, "triangle", 0.1, 0.42);
+  } else if (effect === "conquer") {
+    [523.25, 659.25, 783.99].forEach(function (frequency, index) {
+      playTone(frequency, 0.3, "triangle", index * 0.13, 0.48);
+    });
+  } else if (effect === "failed") {
+    playTone(320, 0.24, "sawtooth", 0, 0.4);
+    playTone(220, 0.3, "sawtooth", 0.16, 0.42);
+  } else if (effect === "turn") {
+    playTone(440, 0.2, "triangle", 0, 0.4);
+    playTone(554.37, 0.28, "triangle", 0.14, 0.42);
+  }
+}
 
 // NEW REGION GROUPING START
 const countryRegions = {
@@ -315,7 +298,7 @@ function fillMenus(game) {
   }
 }
 
-async function sendAction(url, body) {
+async function sendAction(url, body, soundEffect) {
   const response = await fetch("/api/games/" + gameId + url, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -324,6 +307,9 @@ async function sendAction(url, body) {
   const data = await response.json();
   document.getElementById("actionMessage").innerText = data.message || "";
   if (data.game) {
+    if (response.ok && soundEffect) {
+      playSoundEffect(soundEffect);
+    }
     showGame(data.game);
   }
   return data;
@@ -333,7 +319,7 @@ function placeSoldiers() {
   sendAction("/place", {
     country: document.getElementById("placeCountry").value,
     amount: document.getElementById("placeAmount").value
-  });
+  }, "place");
 }
 
 function transferSoldiers() {
@@ -341,7 +327,7 @@ function transferSoldiers() {
     from: document.getElementById("transferFrom").value,
     to: document.getElementById("transferTo").value,
     amount: document.getElementById("transferAmount").value
-  });
+  }, "move");
 }
 
 async function attack() {
@@ -351,6 +337,13 @@ async function attack() {
   });
 
   if (data.result) {
+    playSoundEffect("dice");
+    if (data.outcome === "conquered") {
+      playSoundEffect("conquer");
+    } else if (data.outcome === "failed") {
+      playSoundEffect("failed");
+    }
+
     let html = "<p class='battle-heading'>";
     if (data.outcome === "conquered") {
       html += "Territory conquered!";
@@ -384,7 +377,7 @@ async function attack() {
 
 function endTurn() {
   document.getElementById("battleBox").innerHTML = "";
-  sendAction("/endturn");
+  sendAction("/endturn", null, "turn");
 }
 
 loadGame();
@@ -400,6 +393,7 @@ function addLogLine(text) {
 function showDice(event) {
   if (!event.attackerDice) return;
 
+  playSoundEffect("dice");
   let html = "Attacker: ";
   event.attackerDice.forEach(function (d) {
     html += "<span class='die'>" + d + "</span>";
@@ -440,6 +434,9 @@ async function runNpcTurns() {
       drawBoard(event.snapshot);
       addLogLine(event.text);
       showDice(event);
+      if (event.text.includes("is conquered!")) {
+        playSoundEffect("conquer");
+      }
       document.getElementById("turnInfo").innerText = event.text;
 
       await wait(fastForward ? 250 : 1200);
