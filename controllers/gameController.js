@@ -100,6 +100,9 @@ exports.getGame = async function (req, res) {
     if (!game) {
       return res.status(404).json({ message: "Game not found." });
     }
+    if (String(game.user) !== String(req.session.userId)) {
+      return res.status(403).json({ message: "This is not your game." });
+    }
     res.json(publicGame(game, req.session.userId));
   } catch (error) {
     res.status(404).json({ message: "Game not found." });
@@ -308,10 +311,13 @@ exports.npcTurn = async function (req, res) {
 exports.getHistory = async function (req, res) {
   try {
     const game = await Game.findById(req.params.id)
-      .select("humanPlayer status winner history");
+      .select("user humanPlayer status winner history");
 
     if (!game) {
       return res.status(404).json({ message: "Game not found." });
+    }
+    if (String(game.user) !== String(req.session.userId)) {
+      return res.status(403).json({ message: "This is not your game." });
     }
 
     res.json({
