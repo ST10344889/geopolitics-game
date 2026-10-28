@@ -5,6 +5,82 @@ let humanName = "";
 let playerNames = [];
 let npcRunning = false;
 let fastForward = false;
+let audioContext = null;
+let musicVolume = null;
+let musicTimer = null;
+let musicNoteIndex = 0;
+const marchMelody = [
+  392, 392, 523.25, 392, 440, 392, 329.63, 0,
+  392, 392, 587.33, 523.25, 440, 392, 329.63, 0
+];
+
+function startBackgroundMusic() {
+  if (!audioContext || musicTimer) return;
+
+  musicVolume.gain.cancelScheduledValues(audioContext.currentTime);
+  musicVolume.gain.setTargetAtTime(0.025, audioContext.currentTime, 0.8);
+  musicTimer = window.setInterval(function () {
+    const frequency = marchMelody[musicNoteIndex % marchMelody.length];
+    const startAt = audioContext.currentTime + 0.02;
+
+    if (frequency) {
+      const oscillator = audioContext.createOscillator();
+      const filter = audioContext.createBiquadFilter();
+      const noteVolume = audioContext.createGain();
+      oscillator.type = "sawtooth";
+      oscillator.frequency.setValueAtTime(frequency, startAt);
+      filter.type = "lowpass";
+      filter.frequency.setValueAtTime(1400, startAt);
+      noteVolume.gain.setValueAtTime(0.001, startAt);
+      noteVolume.gain.exponentialRampToValueAtTime(0.22, startAt + 0.04);
+      noteVolume.gain.exponentialRampToValueAtTime(0.001, startAt + 0.38);
+      oscillator.connect(filter);
+      filter.connect(noteVolume);
+      noteVolume.connect(musicVolume);
+      oscillator.start(startAt);
+      oscillator.stop(startAt + 0.4);
+    }
+
+    if (musicNoteIndex % 2 === 0) {
+      const drum = audioContext.createOscillator();
+      const drumVolume = audioContext.createGain();
+      drum.type = "triangle";
+      drum.frequency.setValueAtTime(95, startAt);
+      drum.frequency.exponentialRampToValueAtTime(45, startAt + 0.13);
+      drumVolume.gain.setValueAtTime(0.3, startAt);
+      drumVolume.gain.exponentialRampToValueAtTime(0.001, startAt + 0.15);
+      drum.connect(drumVolume);
+      drumVolume.connect(musicVolume);
+      drum.start(startAt);
+      drum.stop(startAt + 0.16);
+    }
+
+    musicNoteIndex = (musicNoteIndex + 1) % marchMelody.length;
+  }, 500);
+}
+
+function prepareBackgroundMusic() {
+  if (!audioContext && window.AudioContext) {
+    audioContext = new window.AudioContext();
+    musicVolume = audioContext.createGain();
+    musicVolume.gain.value = 0.001;
+    musicVolume.connect(audioContext.destination);
+  }
+
+  if (audioContext && audioContext.state === "suspended") {
+    audioContext.resume().then(function () {
+      startBackgroundMusic();
+    }).catch(function (error) {
+      console.info("Background music will start after a page interaction.", error);
+    });
+  } else {
+    startBackgroundMusic();
+  }
+}
+
+prepareBackgroundMusic();
+document.addEventListener("pointerdown", prepareBackgroundMusic, { once: true });
+document.addEventListener("keydown", prepareBackgroundMusic, { once: true });
 
 // NEW REGION GROUPING START
 const countryRegions = {
